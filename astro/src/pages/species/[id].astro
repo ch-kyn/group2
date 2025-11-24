@@ -1,0 +1,97 @@
+---
+// Her kommer JavaScript/data senere
+// Minimal getStaticPaths - lager bare én side for testing
+// Henter ID-er fra din lokale JSON fil
+import speciesData from '../../../api-backup/species.json';
+import peopleData from '../../../api-backup/people.json';
+import filmsData from '../../../api-backup/films.json';
+import Layout from '../../layouts/Layout.astro';
+import CharacterDetailItem from '../../components/CharacterDetailItem.astro';
+import InfoBox from '../../components/InfoBox.astro';
+import '../../styles/species.css';
+import '../../styles/shared.css';
+
+export async function getStaticPaths() {
+    return speciesData.map(species => {
+        // Finn people
+        const relatedPeople = peopleData.filter(person => 
+            species.people && species.people.some(url => url.includes(person.id))
+        );
+        
+        // Finn films
+        const relatedFilms = filmsData.filter(film =>
+            species.films && species.films.some(url => url.includes(film.id))
+        );
+        
+        return {
+            params: { id: species.id },
+            props: { species, people: relatedPeople, films: relatedFilms }
+        };
+    });
+}
+
+const { species, people, films } = Astro.props;
+---
+
+<Layout title="Species Details - Studio Ghibli" description="View species details">
+    <main class="container">
+        <div class="species-detail">
+            <div class=`species-hero ${species.classification === 'Mammal' ? 'species-hero-mammal': 'species-hero-default'}`>
+                <div class="species-hero-content">
+                    <h2 class="species-hero-title">{species.name}</h2>
+                    <p class="species-hero-subtitle">{species.classification || 'Unknown'}</p>
+                </div>
+            </div>
+            
+            <div class="detail-header">
+                <h2>{species.name}</h2>
+                
+                <div class="info-grid">
+                    <InfoBox label="Classification" value={species.classification || 'Unknown'} />
+                    <InfoBox label="Eye Colors" value={species.eye_colors || 'Unknown'} />
+                    <InfoBox label="Hair Colors" value={species.hair_colors || 'Unknown'}/>
+                </div>
+            </div>
+            
+            <div class="characters-section">
+              <h3 class="section-title">Characters of this Species ({people.length})</h3>
+              <div class="characters-grid">
+                  {people.length === 0 ? (
+                      <p style="text-align: center; grid-column: 1/-1;">No characters found.</p>
+                  ) : (
+                      people.map(person => (
+                          <div class="character-card">
+                              <div class={`character-avatar avatar-${person.gender?.toLowerCase() || 'na'}`}>
+                                  {person.name.split(' ').length >= 2 
+                                      ? person.name.split(' ')[0][0] + person.name.split(' ')[person.name.split(' ').length - 1][0]
+                                      : person.name.substring(0, 2)
+                                  }
+                              </div>
+                              <h4>{person.name}</h4>
+                              <div class="character-details">
+                                  {person.gender && (<CharacterDetailItem label="Gender" value={person.gender} />)}
+                                  {person.age && (<CharacterDetailItem label="Age" value={person.age} />)}
+                                  {person.eye_color && (<CharacterDetailItem label="Eye Color" value={person.eye_color} />)}
+                                  {person.hair_color && (<CharacterDetailItem label="Hair Color" value={person.hair_color} />)}
+                              </div>
+                          </div>
+                      ))
+                  )}
+              </div>
+          </div>
+            
+          <div class="additional-section">
+            <h3 class="section-title">Films Featuring this Species</h3>
+            <div class="info-list">
+                {films.length === 0 ? (
+                    <div class="info-tag">None</div>
+                ) : (
+                    films.map(film => (
+                        <a href={`/film/${film.id}`} class="info-tag">{film.title}</a>
+                    ))
+                )}
+            </div>
+        </div>
+      </div>
+    </main>
+</Layout>

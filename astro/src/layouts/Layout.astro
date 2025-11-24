@@ -1,0 +1,71 @@
+---
+const { title, description, navigation } = Astro.props;
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description}>
+		<title>{title}</title>
+		<link rel="preconnect" href="https://image.tmdb.org" />	
+	</head>
+	<body>
+		<Header client:never navigation={navigation}/>
+		<div class="clouds"></div>
+		<slot />
+		<Footer client:never />
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		background: linear-gradient(to bottom, #e3f2fd 0%, #fff9e6 50%, #ffebcd 100%);
+		color: var(--text-dark);
+		line-height: 1.6;
+		overflow-x: hidden;
+		position: relative;
+		min-height: 100vh;
+	}
+
+	/* Animated clouds background */
+	.clouds {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow: hidden;
+		z-index: -1;
+	}
+
+	.clouds::before,
+	.clouds::after {
+		content: '';
+		position: absolute;
+		width: 200px;
+		height: 60px;
+		background: rgba(255, 255, 255, 0.3);
+		border-radius: 100px;
+		animation: float 30s infinite ease-in-out;
+	}
+
+	.clouds::before {
+		top: 10%;
+		left: -200px;
+		animation-delay: 0s;
+	}
+
+	.clouds::after {
+		top: 30%;
+		left: -200px;
+		animation-delay: 15s;
+	}
+</style>

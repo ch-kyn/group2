@@ -1,0 +1,29 @@
+{
+  "name": "fast-fireball",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.15.4",
+    "sharp": "^0.34.5"
+  },
+  "description": "```sh npm create astro@latest -- --template basics ```",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ch-kyn/omg.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ch-kyn/omg/issues"
+  },
+  "homepage": "https://github.com/ch-kyn/omg#readme"
+}

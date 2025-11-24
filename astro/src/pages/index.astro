@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import filmsData from '../../api-backup/films.json';
+import "../styles/shared.css";
+import "../styles/index.css";
+
+// sorting films by release date
+const sortedFilms = filmsData.sort((a,b) => parseInt(a.release_date) - parseInt(b.release_date));
+---
+<Layout title="Studio Ghibli Films" description="Overview over Studio Ghibli films" navigation={false}> 
+    <main class="container">
+        <div class="films-grid">
+            {sortedFilms.map((film) => (
+				//må skifte her til dist/films/film.id når bygget og deployet, for dev mode fungerer films/film.id fint
+                <a href={`/films/${film.id}`} class="film-card">
+                    <img 
+                        src={`${film.image}`} 
+                        alt={film.title}
+                        class="film-image"
+                        width="600"
+                        height="900"
+                        loading="lazy"
+                    />
+                    <div class="film-content">
+                        <div class="release-year">{film.release_date}</div>
+                        <h2>{film.title}</h2>
+                        <div class="original-title">{film.original_title}</div>
+                        
+                        <div class="film-info">
+                            <div class="info-item">
+                                <span class="info-label">Director:</span>
+                                <span>{film.director}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Producer:</span>
+                                <span>{film.producer}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Runtime:</span>
+                                <span>{film.running_time} mins</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="rt-score">⭐ {film.rt_score}%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="description">
+                            {film.description}
+                        </div>
+                    </div>
+                </a>
+            ))}
+        </div>
+    </main>
+</Layout>

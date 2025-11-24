@@ -1,0 +1,33 @@
+---
+const { label, value } = Astro.props;
+---
+
+<div class="info-box">
+    <div class="info-box-label">{label}</div>
+    <div class="info-box-value">{value}</div>
+</div>
+
+<style>
+    .info-box {
+        background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        border: 2px solid var(--light-green);
+    }
+
+    .info-box-label {
+        color: var(--primary-green);
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
+
+    .info-box-value {
+        color: var(--text-dark);
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+</style>

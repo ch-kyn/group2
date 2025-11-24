@@ -1,0 +1,28 @@
+---
+const { label, value } = Astro.props;
+---
+
+<div class="character-detail-item">
+    <span class="detail-label">{label}:</span>
+    <span class="detail-value">
+        {value ? value : <slot />}
+    </span>
+</div>
+
+<style>
+.character-detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+}
+
+.detail-label {
+    color: var(--warm-brown);
+    font-weight: 600;
+}
+
+.detail-value {
+    color: var(--text-dark);
+    text-align: right;
+}
+</style>

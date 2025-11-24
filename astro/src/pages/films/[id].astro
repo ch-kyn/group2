@@ -1,0 +1,181 @@
+---
+// @ts-nocheck
+import filmsData from '../../../api-backup/films.json';
+import peopleData from '../../../api-backup/people.json';
+import speciesData from '../../../api-backup/species.json';
+import locationsData from '../../../api-backup/locations.json';
+import vehiclesData from '../../../api-backup/vehicles.json';
+import Layout from '../../layouts/Layout.astro';
+import CharacterDetailItem from '../../components/CharacterDetailItem.astro';
+import InfoBox from '../../components/InfoBox.astro';
+import '../../styles/shared.css';
+import '../../styles/film.css';
+
+function getInitials(name) {
+  if (!name) return '?';
+  const parts = name.split(' ');
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return name.substring(0, 2).toUpperCase();
+}
+
+function capitalize(str) {
+  if (!str || str === 'n/a' || str === 'NA') return str;
+  return str.split(' ').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  ).join(' ');
+}
+
+export async function getStaticPaths() {
+  return filmsData.map(film => {
+    // Find related people
+    const relatedPeople = peopleData.filter(person =>
+      film.people && film.people.some(url => url.includes(person.id))
+    );
+    
+    // For each person, find their species
+    const peopleWithSpecies = relatedPeople.map(person => {
+      const personSpecies = speciesData.find(species =>
+        person.species && typeof person.species === 'string' && person.species.includes(species.id)
+      );
+      return { ...person, speciesData: personSpecies };
+    });
+    
+    // Find related locations
+    const relatedLocations = locationsData.filter(location =>
+      film.locations && film.locations.some(url => url.includes(location.id))
+    );
+    
+    // Find related species
+    const relatedSpecies = speciesData.filter(species =>
+      film.species && film.species.some(url => url.includes(species.id))
+    );
+    
+    // Find related vehicles
+    const relatedVehicles = vehiclesData.filter(vehicle =>
+      film.vehicles && film.vehicles.some(url => url.includes(vehicle.id))
+    );
+    
+    return {
+      params: { id: film.id },
+      props: {
+        film,
+        people: peopleWithSpecies,
+        locations: relatedLocations,
+        species: relatedSpecies,
+        vehicles: relatedVehicles
+      }
+    };
+  });
+}
+
+const { film, people, locations, species, vehicles } = Astro.props;
+---
+
+<Layout title={`${film.title} - Studio Ghibli`} description={'View movie details'}>
+  <main class="container">
+    <div class="film-detail">
+      <div class="detail-hero">
+        <img 
+          src={`/${film.movie_banner || film.image}`}
+          alt={film.title}
+          class="detail-banner"
+          loading="eager"
+        />
+      </div>
+      
+      <div class="detail-header">
+        <h2>{film.title}</h2>
+        <div class="detail-original-title">{film.original_title} ({film.original_title_romanised})</div>
+        
+        <div class="info-grid">
+          <InfoBox label="Release Year" value={film.release_date} />
+          <InfoBox label="Director" value={film.director} />
+          <InfoBox label="Producer" value={film.producer} />
+          <InfoBox label="Running Time" value=`${film.running_time} mins` />
+          <InfoBox label="RT Score" value=`⭐ ${film.rt_score}%` />
+        </div>
+        
+        <div class="detail-description">
+          {film.description}
+        </div>
+      </div>
+      
+      <div class="characters-section">
+        <h3 class="section-title">Characters ({people.length})</h3>
+        <div class="characters-grid">
+          {people.length === 0 ? (
+            <p style="text-align: center; grid-column: 1/-1; color: var(--text-dark);">No character information available for this film.</p>
+          ) : (
+            people.map((person) => (
+              <div class="character-card">
+                <div class={`character-avatar avatar-${person.gender?.toLowerCase() || 'na'}`}>
+                  {getInitials(person.name)}
+                </div>
+                <h4>{person.name}</h4>
+                <div class="character-details">
+                  {person.gender && (<CharacterDetailItem label="Gender" value={person.gender} />)}
+                  {person.age && (<CharacterDetailItem label="Age" value={person.age} />)}
+                  {person.eye_color && (<CharacterDetailItem label="Eye Color" value={person.eye_color} />)}
+                  {person.hair_color && (<CharacterDetailItem label="Hair Color" value={capitalize(person.hair_color)} />)}
+                  {person.speciesData?.name && (
+                    <CharacterDetailItem label="Species">
+                      <a href={`/species/${person.speciesData.id}`} class="species-link">
+                        {person.speciesData.name}
+                      </a>
+                    </CharacterDetailItem>
+
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+      
+      <div class="additional-section">
+        <h3 class="section-title">Additional Information</h3>
+        
+        <div class="info-section">
+          <h4>Locations ({locations.length})</h4>
+          <div class="info-list">
+            {locations.length === 0 ? (
+              <div class="info-tag">None</div>
+            ) : (
+              locations.map((location) => (
+                <div class="info-tag">{location.name}</div>
+              ))
+            )}
+          </div>
+        </div>
+        
+        <div class="info-section">
+          <h4>Species ({species.length})</h4>
+          <div class="info-list">
+            {species.length === 0 ? (
+              <div class="info-tag">None</div>
+            ) : (
+              species.map((spec) => (
+                <div class="info-tag">{spec.name}</div>
+              ))
+            )}
+          </div>
+        </div>
+        
+        <div class="info-section">
+          <h4>Vehicles ({vehicles.length})</h4>
+          <div class="info-list">
+            {vehicles.length === 0 ? (
+              <div class="info-tag">None</div>
+            ) : (
+              vehicles.map((vehicle) => (
+                <div class="info-tag">{vehicle.name}</div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

@@ -1,0 +1,60 @@
+---
+const { navigation = true } = Astro.props;
+---
+
+<header>
+    <div class="container">
+        <h1 class="logo">STUDIO GHIBLI</h1>
+
+        {navigation
+          ? <a href="/" class="back-btn">← Back to All Films</a>
+          : <p class="tagline">Explore the Magical World of Ghibli</p>
+        }
+    </div>
+</header>
+
+<style>
+    header {
+        background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+        padding: 50px 0;
+        text-align: center;
+        box-shadow: 0 4px 20px var(--shadow);
+        position: relative;
+    }
+
+    .logo {
+        font-size: 3.5rem;
+        font-weight: 900;
+        letter-spacing: 6px;
+        color: var(--text-light);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        margin-bottom: 10px;
+    }
+
+    .tagline {
+        color: var(--cream);
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+        font-weight: 300;
+    }
+
+    .back-btn {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 12px 24px;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid var(--cream);
+        color: var(--cream);
+        text-decoration: none;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .back-btn:hover {
+        background: var(--cream);
+        color: var(--primary-green);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+</style>
