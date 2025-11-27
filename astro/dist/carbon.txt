@@ -1,0 +1,10 @@
+[org]
+disclosures = [
+    { doc_type = "web-page", url = "https://www.netlify.com/sustainability/", domain = "netlify.com" },
+]
+
+[upstream]
+services = [
+    { domain = "netlify.com", service_type = "static-hosting" },
+    { domain = "netlify.com", service_type = "content-delivery-network" }
+]
